@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/((?!assets|resume\\.pdf|ai-avatar\\.png|vite\\.svg).*)", "destination": "/index.html" }
+  ]
+}

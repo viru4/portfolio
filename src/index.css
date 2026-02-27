@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --radius-3xl: calc(var(--radius) + 12px);
+    --radius-4xl: calc(var(--radius) + 16px);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+    --radius: 0.625rem;
+    /* Light theme — ML Lab: clean white with electric cyan/teal accents */
+    --background: oklch(0.98 0.008 195);
+    --foreground: oklch(0.15 0.02 220);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.15 0.02 220);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.15 0.02 220);
+    --primary: oklch(0.55 0.18 195);
+    --primary-foreground: oklch(0.98 0.005 195);
+    --secondary: oklch(0.95 0.015 195);
+    --secondary-foreground: oklch(0.28 0.05 220);
+    --muted: oklch(0.95 0.008 200);
+    --muted-foreground: oklch(0.48 0.03 220);
+    --accent: oklch(0.93 0.04 280);
+    --accent-foreground: oklch(0.25 0.06 260);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.90 0.015 200);
+    --input: oklch(0.92 0.012 200);
+    --ring: oklch(0.55 0.18 195);
+    --chart-1: oklch(0.55 0.18 195);
+    --chart-2: oklch(0.60 0.20 155);
+    --chart-3: oklch(0.62 0.22 280);
+    --chart-4: oklch(0.70 0.18 80);
+    --chart-5: oklch(0.58 0.20 30);
+    --sidebar: oklch(0.97 0.008 200);
+    --sidebar-foreground: oklch(0.15 0.02 220);
+    --sidebar-primary: oklch(0.55 0.18 195);
+    --sidebar-primary-foreground: oklch(0.98 0.005 195);
+    --sidebar-accent: oklch(0.93 0.03 280);
+    --sidebar-accent-foreground: oklch(0.25 0.06 260);
+    --sidebar-border: oklch(0.90 0.015 200);
+    --sidebar-ring: oklch(0.55 0.18 195);
+}
+
+.dark {
+    /* Dark theme — Neural Network: deep space with neon cyan + matrix green */
+    --background: oklch(0.13 0.025 240);
+    --foreground: oklch(0.95 0.01 195);
+    --card: oklch(0.17 0.03 240);
+    --card-foreground: oklch(0.95 0.01 195);
+    --popover: oklch(0.19 0.03 240);
+    --popover-foreground: oklch(0.95 0.01 195);
+    --primary: oklch(0.75 0.18 185);
+    --primary-foreground: oklch(0.12 0.025 220);
+    --secondary: oklch(0.22 0.035 240);
+    --secondary-foreground: oklch(0.92 0.01 195);
+    --muted: oklch(0.21 0.025 240);
+    --muted-foreground: oklch(0.72 0.02 200);
+    --accent: oklch(0.28 0.055 280);
+    --accent-foreground: oklch(0.93 0.01 195);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(0.28 0.035 240);
+    --input: oklch(0.25 0.035 240);
+    --ring: oklch(0.75 0.18 185);
+    --chart-1: oklch(0.75 0.18 185);
+    --chart-2: oklch(0.72 0.20 155);
+    --chart-3: oklch(0.70 0.22 280);
+    --chart-4: oklch(0.65 0.18 80);
+    --chart-5: oklch(0.68 0.20 30);
+    --sidebar: oklch(0.15 0.03 240);
+    --sidebar-foreground: oklch(0.95 0.01 195);
+    --sidebar-primary: oklch(0.75 0.18 185);
+    --sidebar-primary-foreground: oklch(0.12 0.025 220);
+    --sidebar-accent: oklch(0.25 0.05 280);
+    --sidebar-accent-foreground: oklch(0.93 0.01 195);
+    --sidebar-border: oklch(0.26 0.035 240);
+    --sidebar-ring: oklch(0.75 0.18 185);
+}
+
+/* Prevent horizontal overflow from decorative blobs */
+html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+/* Base font & heading styles */
+body {
+    font-family: var(--font-sans);
+    color: var(--foreground);
+    background-color: var(--background);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+}
+
+code, pre, kbd, samp {
+    font-family: var(--font-mono);
+}
+
+/* ML Grid Background Pattern */
+.ml-grid-bg {
+    background-image:
+        linear-gradient(var(--color-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-primary) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.03;
+}
+
+/* Neural pulse animation */
+@keyframes neural-pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* Data flow animation */
+@keyframes data-flow {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100vh); opacity: 0; }
+}
+
+/* Matrix rain column */
+.matrix-col {
+    animation: data-flow var(--dur, 8s) linear var(--delay, 0s) infinite;
+}
+
+/* Glow effect for ML elements */
+.ml-glow {
+    box-shadow: 0 0 20px oklch(0.75 0.18 185 / 0.15), 0 0 60px oklch(0.75 0.18 185 / 0.05);
+}
+
+.dark .ml-glow {
+    box-shadow: 0 0 20px oklch(0.75 0.18 185 / 0.3), 0 0 60px oklch(0.75 0.18 185 / 0.1);
+}
