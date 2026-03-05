@@ -237,7 +237,7 @@ export default function AboutAdmin() {
                 .upload('resume.pdf', file, { upsert: true, contentType: 'application/pdf' })
               if (!error) {
                 const { data: urlData } = supabase.storage.from('resumes').getPublicUrl('resume.pdf')
-                const publicUrl = urlData.publicUrl
+                const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`
                 if (rowId) {
                   await supabase.from('about').update({ resume_url: publicUrl, resume_name: file.name }).eq('id', rowId)
                 }

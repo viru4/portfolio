@@ -194,7 +194,11 @@ export default function Hero() {
   useEffect(() => {
     async function fetchResumeUrl() {
       const { data } = await supabase.from('about').select('resume_url').limit(1).single()
-      if (data?.resume_url) setResumeUrl(data.resume_url)
+      if (data?.resume_url) {
+        // Ensure cache-busting param is present
+        const url = data.resume_url.split('?')[0]
+        setResumeUrl(`${url}?t=${Date.now()}`)
+      }
     }
     fetchResumeUrl()
   }, [])
@@ -286,7 +290,25 @@ export default function Hero() {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="gap-2">
-              <a href={resumeUrl} download="Virendra_Kumar_Resume.pdf">
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={async (e) => {
+                  // Handle cross-origin download
+                  if (resumeUrl.startsWith('http')) {
+                    e.preventDefault()
+                    const res = await fetch(resumeUrl)
+                    const blob = await res.blob()
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = 'Virendra_Kumar_Resume.pdf'
+                    a.click()
+                    URL.revokeObjectURL(url)
+                  }
+                }}
+              >
                 <FileDown className="h-4 w-4" /> Download Resume
               </a>
             </Button>
