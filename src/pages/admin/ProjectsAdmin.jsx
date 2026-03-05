@@ -248,7 +248,7 @@ export default function ProjectsAdmin() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>ML Pipeline <span className="text-xs text-muted-foreground">(one step per line)</span></Label>
+              <Label>Pipeline <span className="text-xs text-muted-foreground">(one step per line)</span></Label>
               <Textarea name="ml_pipeline" value={form.ml_pipeline} onChange={onChange} rows={4} placeholder={"Step 1\nStep 2\nStep 3"} />
             </div>
             <div className="space-y-2">

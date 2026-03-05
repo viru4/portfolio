@@ -85,7 +85,7 @@ const whatIDo = [
 
 const techPills = [
   'Python', 'TensorFlow', 'PyTorch', 'Scikit-learn', 'Pandas', 'NumPy',
-  'Keras', 'OpenCV', 'NLTK', 'Matplotlib', 'Flask', 'Docker',
+  'Keras', 'OpenCV', 'NLTK', 'Matplotlib', 'Flask',
 ]
 
 export default function About() {

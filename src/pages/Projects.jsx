@@ -1,11 +1,20 @@
 import ProjectCard from '@/components/ProjectCard'
 import { Badge } from '@/components/ui/badge'
-import { Home, PenTool, Briefcase, Sparkles, Code, BrainCircuit, FlaskConical, Network } from 'lucide-react'
+import {
+  Home, PenTool, Briefcase, Sparkles, Code, BrainCircuit, FlaskConical, Network,
+  Database, LineChart, Bot, Image, ShieldCheck, Globe, BarChart3,
+  Cpu, MessageSquare, FileText, Server, Heart, Search, Rocket, Layers,
+} from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 /* ── icon map for DB projects ── */
-const iconMap = { Home, PenTool, Briefcase, Code, BrainCircuit }
+const iconMap = {
+  Home, PenTool, Briefcase, Code, BrainCircuit,
+  Database, LineChart, Bot, Image, ShieldCheck, Globe, BarChart3,
+  Network, FlaskConical, Cpu, MessageSquare, Sparkles, FileText,
+  Server, Heart, Search, Rocket, Layers,
+}
 const colorMap = {
   sky:     { color: 'text-sky-500',     bg: 'bg-sky-500/10' },
   violet:  { color: 'text-violet-500',  bg: 'bg-violet-500/10' },
@@ -13,6 +22,16 @@ const colorMap = {
   amber:   { color: 'text-amber-500',   bg: 'bg-amber-500/10' },
   cyan:    { color: 'text-cyan-500',    bg: 'bg-cyan-500/10' },
   teal:    { color: 'text-teal-500',    bg: 'bg-teal-500/10' },
+  rose:    { color: 'text-rose-500',    bg: 'bg-rose-500/10' },
+  orange:  { color: 'text-orange-500',  bg: 'bg-orange-500/10' },
+  indigo:  { color: 'text-indigo-500',  bg: 'bg-indigo-500/10' },
+  pink:    { color: 'text-pink-500',    bg: 'bg-pink-500/10' },
+  lime:    { color: 'text-lime-500',    bg: 'bg-lime-500/10' },
+  blue:    { color: 'text-blue-500',    bg: 'bg-blue-500/10' },
+  red:     { color: 'text-red-500',     bg: 'bg-red-500/10' },
+  fuchsia: { color: 'text-fuchsia-500', bg: 'bg-fuchsia-500/10' },
+  yellow:  { color: 'text-yellow-500',  bg: 'bg-yellow-500/10' },
+  slate:   { color: 'text-slate-500',   bg: 'bg-slate-500/10' },
 }
 
 /* ── scroll reveal hook ── */

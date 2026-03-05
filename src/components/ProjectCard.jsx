@@ -73,7 +73,7 @@ export default function ProjectCard({
               <ChevronRight
                 className={`h-3.5 w-3.5 transition-transform ${expanded ? 'rotate-90' : ''}`}
               />
-              ML Pipeline
+              Pipeline
             </button>
             <div
               className={`grid transition-all duration-300 ${
