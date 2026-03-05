@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Github, FileDown, ArrowRight, BrainCircuit, Terminal, Activity, Cpu, Database, FlaskConical, Binary, Sigma, Network } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
+import { supabase } from '@/lib/supabase'
 
 /* ── Animated Typewriter ── */
 function TypeWriter({ words, speed = 80, pause = 1800 }) {
@@ -188,6 +189,16 @@ function NeuralNetSVG() {
    HERO — "ML Neural Lab"
    ═══════════════════════════════════════════════ */
 export default function Hero() {
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf')
+
+  useEffect(() => {
+    async function fetchResumeUrl() {
+      const { data } = await supabase.from('about').select('resume_url').limit(1).single()
+      if (data?.resume_url) setResumeUrl(data.resume_url)
+    }
+    fetchResumeUrl()
+  }, [])
+
   const roles = [
     'Neural Network Architect',
     'Deep Learning Engineer',
@@ -275,7 +286,7 @@ export default function Hero() {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="gap-2">
-              <a href="/resume.pdf" download>
+              <a href={resumeUrl} download="Virendra_Kumar_Resume.pdf">
                 <FileDown className="h-4 w-4" /> Download Resume
               </a>
             </Button>

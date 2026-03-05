@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2, Save, CheckCircle2, User } from 'lucide-react'
+import { Loader2, Save, CheckCircle2, User, Upload, FileText, Trash2 } from 'lucide-react'
 
 export default function AboutAdmin() {
   const [form, setForm] = useState({ bio: '', career_goal: '', learning_focus: '' })
@@ -12,6 +12,9 @@ export default function AboutAdmin() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [rowId, setRowId] = useState(null)
+  const [resumeUrl, setResumeUrl] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     async function load() {
@@ -23,6 +26,7 @@ export default function AboutAdmin() {
           career_goal: data.career_goal || '',
           learning_focus: data.learning_focus || '',
         })
+        setResumeUrl(data.resume_url || null)
       }
       setLoading(false)
     }
@@ -135,6 +139,83 @@ export default function AboutAdmin() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Resume Upload */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <FileText className="h-4 w-4" /> Resume
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Label className="text-xs text-muted-foreground">
+            Upload your resume (PDF). It will be stored in Supabase Storage and used for the download button on the home page.
+          </Label>
+
+          {resumeUrl && (
+            <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
+              <FileText className="h-5 w-5 text-primary" />
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex-1 truncate text-sm text-primary underline">
+                Current Resume
+              </a>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-red-500 hover:text-red-600"
+                onClick={async () => {
+                  await supabase.storage.from('resumes').remove(['resume.pdf'])
+                  if (rowId) {
+                    await supabase.from('about').update({ resume_url: null }).eq('id', rowId)
+                  }
+                  setResumeUrl(null)
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              setUploading(true)
+              // Upload to Supabase Storage (overwrite existing)
+              const { error } = await supabase.storage
+                .from('resumes')
+                .upload('resume.pdf', file, { upsert: true, contentType: 'application/pdf' })
+              if (!error) {
+                const { data: urlData } = supabase.storage.from('resumes').getPublicUrl('resume.pdf')
+                const publicUrl = urlData.publicUrl
+                // Save URL in about table
+                if (rowId) {
+                  await supabase.from('about').update({ resume_url: publicUrl }).eq('id', rowId)
+                }
+                setResumeUrl(publicUrl)
+              }
+              setUploading(false)
+              // Reset file input
+              if (fileInputRef.current) fileInputRef.current.value = ''
+            }}
+          />
+          <Button
+            variant="outline"
+            className="gap-2"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {uploading ? (
+              <><Loader2 className="h-4 w-4 animate-spin" /> Uploading…</>
+            ) : (
+              <><Upload className="h-4 w-4" /> Upload Resume PDF</>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
 
       <div className="flex items-center gap-3">
         <Button className="gap-2" onClick={handleSave} disabled={saving}>

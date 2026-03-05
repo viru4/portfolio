@@ -100,9 +100,25 @@ CREATE POLICY "Public read about" ON about
 CREATE POLICY "Auth manage about" ON about
   FOR ALL USING (auth.role() = 'authenticated');
 
+-- Add resume_url column
+ALTER TABLE about ADD COLUMN IF NOT EXISTS resume_url TEXT;
+
 -- Seed a default row so the admin editor has something to update
 INSERT INTO about (bio, career_goal, learning_focus) VALUES (
   'I''m a final-year B.Tech student specializing in AI & Machine Learning.',
   'Seeking an AI/ML Engineer role where I can design, build and deploy scalable ML solutions.',
   'Currently deepening my skills in deep learning, NLP and MLOps.'
 );
+
+-- 6. Storage bucket for resume
+-- Run these in Supabase SQL Editor:
+INSERT INTO storage.buckets (id, name, public) VALUES ('resumes', 'resumes', true)
+  ON CONFLICT (id) DO NOTHING;
+
+-- Allow anyone to read resume files
+CREATE POLICY "Public read resumes" ON storage.objects
+  FOR SELECT USING (bucket_id = 'resumes');
+
+-- Allow authenticated users to upload/update/delete resume files
+CREATE POLICY "Auth manage resumes" ON storage.objects
+  FOR ALL USING (bucket_id = 'resumes' AND auth.role() = 'authenticated');
