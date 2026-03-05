@@ -13,7 +13,9 @@ export default function AboutAdmin() {
   const [saved, setSaved] = useState(false)
   const [rowId, setRowId] = useState(null)
   const [resumeUrl, setResumeUrl] = useState(null)
+  const [resumeName, setResumeName] = useState(null)
   const [uploading, setUploading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export default function AboutAdmin() {
           learning_focus: data.learning_focus || '',
         })
         setResumeUrl(data.resume_url || null)
+        setResumeName(data.resume_name || null)
       }
       setLoading(false)
     }
@@ -152,26 +155,71 @@ export default function AboutAdmin() {
             Upload your resume (PDF). It will be stored in Supabase Storage and used for the download button on the home page.
           </Label>
 
-          {resumeUrl && (
-            <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
-              <FileText className="h-5 w-5 text-primary" />
-              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex-1 truncate text-sm text-primary underline">
-                Current Resume
-              </a>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-red-500 hover:text-red-600"
-                onClick={async () => {
-                  await supabase.storage.from('resumes').remove(['resume.pdf'])
-                  if (rowId) {
-                    await supabase.from('about').update({ resume_url: null }).eq('id', rowId)
-                  }
-                  setResumeUrl(null)
-                }}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+          {resumeUrl ? (
+            <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <FileText className="h-5 w-5 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{resumeName || 'resume.pdf'}</p>
+                  <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
+                    View uploaded resume
+                  </a>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5"
+                  disabled={uploading}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {uploading ? (
+                    <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Replacing…</>
+                  ) : (
+                    <><Upload className="h-3.5 w-3.5" /> Replace Resume</>
+                  )}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1.5 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                  disabled={deleting}
+                  onClick={async () => {
+                    setDeleting(true)
+                    await supabase.storage.from('resumes').remove(['resume.pdf'])
+                    if (rowId) {
+                      await supabase.from('about').update({ resume_url: null, resume_name: null }).eq('id', rowId)
+                    }
+                    setResumeUrl(null)
+                    setResumeName(null)
+                    setDeleting(false)
+                  }}
+                >
+                  {deleting ? (
+                    <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Deleting…</>
+                  ) : (
+                    <><Trash2 className="h-3.5 w-3.5" /> Delete</>
+                  )}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/25 px-6 py-8 text-center transition-colors hover:border-primary/50 hover:bg-muted/30"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="h-8 w-8 text-muted-foreground/50" />
+              <p className="text-sm font-medium text-muted-foreground">Click to upload resume</p>
+              <p className="text-xs text-muted-foreground/60">PDF files only</p>
+              {uploading && (
+                <div className="flex items-center gap-2 pt-1">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <span className="text-xs text-primary">Uploading…</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -184,36 +232,22 @@ export default function AboutAdmin() {
               const file = e.target.files?.[0]
               if (!file) return
               setUploading(true)
-              // Upload to Supabase Storage (overwrite existing)
               const { error } = await supabase.storage
                 .from('resumes')
                 .upload('resume.pdf', file, { upsert: true, contentType: 'application/pdf' })
               if (!error) {
                 const { data: urlData } = supabase.storage.from('resumes').getPublicUrl('resume.pdf')
                 const publicUrl = urlData.publicUrl
-                // Save URL in about table
                 if (rowId) {
-                  await supabase.from('about').update({ resume_url: publicUrl }).eq('id', rowId)
+                  await supabase.from('about').update({ resume_url: publicUrl, resume_name: file.name }).eq('id', rowId)
                 }
                 setResumeUrl(publicUrl)
+                setResumeName(file.name)
               }
               setUploading(false)
-              // Reset file input
               if (fileInputRef.current) fileInputRef.current.value = ''
             }}
           />
-          <Button
-            variant="outline"
-            className="gap-2"
-            disabled={uploading}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {uploading ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> Uploading…</>
-            ) : (
-              <><Upload className="h-4 w-4" /> Upload Resume PDF</>
-            )}
-          </Button>
         </CardContent>
       </Card>
 
