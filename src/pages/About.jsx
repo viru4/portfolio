@@ -174,7 +174,7 @@ export default function About() {
         </div>
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2">
-          {whatIDo.map((item, idx) => {
+          {whatIDo.map((item) => {
             const Icon = item.icon
             return (
               <Card
@@ -233,12 +233,15 @@ export default function About() {
                 { icon: GraduationCap, text: 'Strong ML & math foundations' },
                 { icon: Code2, text: 'Deep learning specialist' },
                 { icon: Layers, text: 'End-to-end pipeline builder' },
-              ].map(({ icon: I, text }) => (
-                <div key={text} className="flex items-center gap-2 rounded-lg border bg-background/60 px-4 py-3">
-                  <I className="h-4 w-4 shrink-0 text-primary" />
-                  <span className="text-sm font-medium">{text}</span>
-                </div>
-              ))}
+              ].map((item) => {
+                const Icon = item.icon
+                return (
+                  <div key={item.text} className="flex items-center gap-2 rounded-lg border bg-background/60 px-4 py-3">
+                    <Icon className="h-4 w-4 shrink-0 text-primary" />
+                    <span className="text-sm font-medium">{item.text}</span>
+                  </div>
+                )
+              })}
             </div>
           </CardContent>
         </Card>
