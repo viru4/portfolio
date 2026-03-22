@@ -190,6 +190,7 @@ function NeuralNetSVG() {
    ═══════════════════════════════════════════════ */
 export default function Hero() {
   const [resumeUrl, setResumeUrl] = useState('/resume.pdf')
+  const resumeClickTimeoutRef = useRef(null)
 
   useEffect(() => {
     async function fetchResumeUrl() {
@@ -202,6 +203,55 @@ export default function Hero() {
     }
     fetchResumeUrl()
   }, [])
+
+  useEffect(() => {
+    return () => {
+      if (resumeClickTimeoutRef.current) {
+        clearTimeout(resumeClickTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  async function downloadResume() {
+    if (resumeUrl.startsWith('http')) {
+      const res = await fetch(resumeUrl)
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'Virendra_Kumar_Resume.pdf'
+      a.click()
+      URL.revokeObjectURL(url)
+      return
+    }
+
+    const a = document.createElement('a')
+    a.href = resumeUrl
+    a.download = 'Virendra_Kumar_Resume.pdf'
+    a.click()
+  }
+
+  function handleResumeSingleClick(e) {
+    e.preventDefault()
+    if (resumeClickTimeoutRef.current) {
+      clearTimeout(resumeClickTimeoutRef.current)
+    }
+
+    // Delay single-click action so double-click can override it.
+    resumeClickTimeoutRef.current = setTimeout(() => {
+      window.open(resumeUrl, '_blank', 'noopener,noreferrer')
+      resumeClickTimeoutRef.current = null
+    }, 250)
+  }
+
+  async function handleResumeDoubleClick(e) {
+    e.preventDefault()
+    if (resumeClickTimeoutRef.current) {
+      clearTimeout(resumeClickTimeoutRef.current)
+      resumeClickTimeoutRef.current = null
+    }
+    await downloadResume()
+  }
 
   const roles = [
     'Neural Network Architect',
@@ -294,20 +344,8 @@ export default function Hero() {
                 href={resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={async (e) => {
-                  // Handle cross-origin download
-                  if (resumeUrl.startsWith('http')) {
-                    e.preventDefault()
-                    const res = await fetch(resumeUrl)
-                    const blob = await res.blob()
-                    const url = URL.createObjectURL(blob)
-                    const a = document.createElement('a')
-                    a.href = url
-                    a.download = 'Virendra_Kumar_Resume.pdf'
-                    a.click()
-                    URL.revokeObjectURL(url)
-                  }
-                }}
+                onClick={handleResumeSingleClick}
+                onDoubleClick={handleResumeDoubleClick}
               >
                 <FileDown className="h-4 w-4" /> Download Resume
               </a>
